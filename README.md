@@ -24,10 +24,9 @@ var option6 = value.ToOption();
 
 Check value
 ``` C#
-if(option.HasValue()) ...
+if(option.HasValue) ...
 option.IfValue(p => Console.WriteLine(p));
-option.IfValue(p => ...).Else(Console.WriteLine("empty"));
-option.IfEmpty(Console.WriteLine("empty"));
+option.IfValue(p => ...).Else(() => Console.WriteLine("empty"));
 ```
 
 Coalesce to value

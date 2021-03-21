@@ -94,7 +94,10 @@ namespace Kodefabrikken.Types
             /// <inheritdoc/>
             public void Else(Action action)
             {
-                _option.IfEmpty(action);
+                if (!_option.HasValue)
+                {
+                    action();
+                };
             }
         }
 
@@ -111,18 +114,6 @@ namespace Kodefabrikken.Types
             }
 
             return new IfValueContext(this);
-        }
-
-        /// <summary>
-        /// Register action to run if <see cref="HasValue"/> is false.
-        /// </summary>
-        /// <param name="action">Action to run if <see cref="HasValue"/> is false.</param>
-        public void IfEmpty(Action action)
-        {
-            if (!HasValue)
-            {
-                action();
-            }
         }
 
         /// <summary>
@@ -170,11 +161,6 @@ namespace Kodefabrikken.Types
         /// <inheritdoc/>
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(this, obj))
-            {
-                return true;
-            }
-
             if (obj is null)
             {
                 return !HasValue;

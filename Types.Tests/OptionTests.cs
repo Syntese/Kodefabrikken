@@ -124,28 +124,6 @@ namespace Kodefabrikken.Types.Tests
         }
 
         [TestMethod]
-        public void Registered_action_called_when_empty()
-        {
-            bool isCalled = false;
-            var SUT = Option<int>.Empty;
-
-            SUT.IfEmpty(() => isCalled = true);
-
-            isCalled.Should().BeTrue();
-        }
-
-        [TestMethod]
-        public void Registered_empty_action_not_called_when_has_value()
-        {
-            bool isCalled = false;
-            var SUT = new Option<int>(3);
-
-            SUT.IfEmpty(() => isCalled = true);
-
-            isCalled.Should().BeFalse();
-        }
-
-        [TestMethod]
         public void Registered_action_called_with_correct_value()
         {
             var value = 3;
