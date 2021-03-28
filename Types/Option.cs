@@ -47,6 +47,25 @@ namespace Kodefabrikken.Types
             }
         }
 
+        /// <summary>
+        /// Creates an empty option.
+        /// </summary>
+        /// <returns>The empty option.</returns>
+        public static Option<T> Create() => Empty;
+
+        /// <summary>
+        /// Creates an option.
+        /// </summary>
+        /// <param name="value">The value of the option.</param>
+        /// <returns>The created option. <see cref="Empty"/> if <paramref name="value"/> is null.</returns>
+        public static Option<T> Create(T value) => value != null ? new Option<T>(value) : Empty;
+        
+        /// <summary>
+        /// Implicitly convert any value to <see cref="Option{T}"/>.
+        /// </summary>
+        /// <param name="value">The value for the option.</param>
+        public static implicit operator Option<T>(T value) => value != null ? new Option<T>(value) : Empty;
+
         T Value { get; }
 
         /// <summary>

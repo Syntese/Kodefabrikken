@@ -27,6 +27,7 @@ namespace Kodefabrikken.Types
             return retval;
         }
 
+        // TODO : Should we remove this as we have implicit & Create ?
         /// <summary>
         /// Converts object to <see cref="Option{T}"/>.
         /// </summary>

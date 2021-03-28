@@ -12,7 +12,7 @@ namespace Types.Tests
     public class OptionExtensionsTests
     {
         [TestMethod]
-        public void Value_type_transforms_to_nullable()
+        public void Option_with_value_type_transforms_to_nullable()
         {
             var value = 3;
             var SUT = new Option<int>(value);
@@ -24,7 +24,7 @@ namespace Types.Tests
         }
 
         [TestMethod]
-        public void Empty_value_type_transforms_to_nullable()
+        public void Option_with_empty_value_type_transforms_to_nullable()
         {
             var SUT = Option<int>.Empty;
 
@@ -34,7 +34,7 @@ namespace Types.Tests
         }
 
         [TestMethod]
-        public void Nullable_value_type_transforms_to_option()
+        public void Nullable_value_type_transforms_to_Option()
         {
             var value = 3;
             Nullable<int> v = value;
@@ -48,7 +48,7 @@ namespace Types.Tests
         }
 
         [TestMethod]
-        public void Empty_nullable_value_type_transforms_to_option()
+        public void Empty_nullable_value_type_transforms_to_Option()
         {
             Nullable<int> v = null;
 
@@ -58,7 +58,7 @@ namespace Types.Tests
         }
 
         [TestMethod]
-        public void Value_type_transforms_to_option()
+        public void Value_type_transforms_to_Option()
         {
             var value = 3;
 
@@ -71,7 +71,7 @@ namespace Types.Tests
         }
 
         [TestMethod]
-        public void Reference_type_transforms_to_option()
+        public void Reference_type_transforms_to_Option()
         {
             OptionExtensionsTests value = new OptionExtensionsTests();
 
@@ -84,7 +84,7 @@ namespace Types.Tests
         }
 
         [TestMethod]
-        public void Empty_reference_type_transforms_to_option()
+        public void Empty_reference_type_transforms_to_Option()
         {
             OptionExtensionsTests value = null;
 
@@ -94,7 +94,7 @@ namespace Types.Tests
         }
 
         [TestMethod]
-        public void Reference_type_transforms_to_object()
+        public void Option_with_reference_type_transforms_to_object()
         {
             var value = new OptionExtensionsTests();
             var SUT = new Option<OptionExtensionsTests>(value);
@@ -105,7 +105,7 @@ namespace Types.Tests
         }
 
         [TestMethod]
-        public void Emtpy_reference_type_transforms_to_object()
+        public void Option_with_emtpy_reference_type_transforms_to_object()
         {
             var SUT = Option<OptionExtensionsTests>.Empty;
 

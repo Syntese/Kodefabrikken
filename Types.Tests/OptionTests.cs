@@ -26,7 +26,7 @@ namespace Kodefabrikken.Types.Tests
         }
 
         [TestMethod]
-        public void Nullable_value_type_Empty_throws_exception()
+        public void Empty_for_Nullable_value_type_throws_exception()
         {
             Action act = () => _ = Option<Nullable<int>>.Empty;
 
@@ -41,13 +41,118 @@ namespace Kodefabrikken.Types.Tests
         }
 
         [TestMethod]
-        public void Nullable_reference_type_Empty_has_no_value()
+        public void Empty_for_Option_type_throws_exception()
+        {
+            Action act = () => _ = Option<Option<int>>.Empty;
+
+            act.Should().Throw<InvalidOperationException>();
+        }
+
+        [TestMethod]
+        public void Empty_for_Value_type_has_no_value()
+        {
+            var SUT = Option<int>.Empty;
+
+            SUT.HasValue.Should().BeFalse();
+        }
+
+        [TestMethod]
+        public void Empty_for_Nullable_reference_type_has_no_value()
         {
             // compiler transforms to wrapped type
 #nullable enable
             var SUT = Option<OptionTests?>.Empty;
 #nullable disable
 
+            SUT.HasValue.Should().BeFalse();
+        }
+
+        [TestMethod]
+        public void Empty_is_created_for_value_type()
+        {
+            var SUT = Option<int>.Create();
+
+            SUT.Should().NotBeNull();
+            SUT.HasValue.Should().BeFalse();
+        }
+
+        [TestMethod]
+        public void Empty_is_created_for_reference_type()
+        {
+            var SUT = Option<OptionTests>.Create();
+
+            SUT.Should().NotBeNull();
+            SUT.HasValue.Should().BeFalse();
+        }
+
+        [TestMethod]
+        public void Option_is_created_for_value_type()
+        {
+            int i = 3;
+
+            var SUT = Option<int>.Create(i);
+
+            SUT.Should().NotBeNull();
+            int v = 0;
+            SUT.IfValue(p => v = p);
+            v.Should().Be(i);
+        }
+
+        [TestMethod]
+        public void Option_is_created_for_reference_type()
+        {
+            OptionTests x = new OptionTests();
+
+            var SUT = Option<OptionTests>.Create(x);
+
+            SUT.Should().NotBeNull();
+            OptionTests v = null;
+            SUT.IfValue(p => v = p);
+            v.Should().BeSameAs(x);
+        }
+
+        [TestMethod]
+        public void Option_is_created_for_null_reference_type()
+        {
+            OptionTests x = null;
+
+            var SUT = Option<OptionTests>.Create(x);
+
+            SUT.Should().NotBeNull();
+            SUT.HasValue.Should().BeFalse();
+        }
+
+        [TestMethod]
+        public void Value_type_is_cast_to_Option()
+        {
+            int i = 3;
+            Option<int> SUT = i;
+
+            SUT.Should().NotBeNull();
+            int v = 0;
+            SUT.IfValue(p => v = p);
+            v.Should().Be(i);
+        }
+
+        [TestMethod]
+        public void Reference_type_is_cast_to_Option()
+        {
+            OptionTests o = new OptionTests();
+            Option<OptionTests> SUT = o;
+
+            SUT.Should().NotBeNull();
+            OptionTests v = null;
+            SUT.IfValue(p => v = p);
+            v.Should().BeSameAs(o);
+        }
+
+        [TestMethod]
+        public void Null_reference_type_is_cast_to_Option()
+        {
+            OptionTests o = null;
+            Option<OptionTests> SUT = o;
+
+            SUT.Should().NotBeNull();
             SUT.HasValue.Should().BeFalse();
         }
 
@@ -88,7 +193,9 @@ namespace Kodefabrikken.Types.Tests
         [TestMethod]
         public void Construction_with_initialized_nullable_value_type_throws_exception()
         {
+#pragma warning disable CA1806 // Do not ignore method results
             Action act = () => new Option<Nullable<int>>(3);
+#pragma warning restore CA1806 // Do not ignore method results
 
             act.Should().Throw<ArgumentException>();
         }
@@ -96,7 +203,9 @@ namespace Kodefabrikken.Types.Tests
         [TestMethod]
         public void Construction_with_empty_nullable_value_type_throws_exception()
         {
+#pragma warning disable CA1806 // Do not ignore method results
             Action act = () => new Option<Nullable<int>>(null);
+#pragma warning restore CA1806 // Do not ignore method results
 
             act.Should().Throw<ArgumentException>();
         }
@@ -106,7 +215,9 @@ namespace Kodefabrikken.Types.Tests
         {
 #nullable enable
             // compiler transforms to wrapped type
+#pragma warning disable CA1806 // Do not ignore method results
             Action act = () => new Option<OptionTests?>(new OptionTests());
+#pragma warning restore CA1806 // Do not ignore method results
 #nullable disable
 
             act.Should().NotThrow();
@@ -117,14 +228,16 @@ namespace Kodefabrikken.Types.Tests
         {
 #nullable enable
             // compiler transforms to wrapped type
+#pragma warning disable CA1806 // Do not ignore method results
             Action act = () => new Option<OptionTests?>(null);
+#pragma warning restore CA1806 // Do not ignore method results
 #nullable disable
 
             act.Should().Throw<ArgumentNullException>();
         }
 
         [TestMethod]
-        public void Registered_action_called_with_correct_value()
+        public void Registered_value_action_called_with_correct_value()
         {
             var value = 3;
             var SUT = new Option<int>(value);
@@ -338,7 +451,7 @@ namespace Kodefabrikken.Types.Tests
         }
 
         [TestMethod]
-        public void Option_is_different_in_values()
+        public void Option_with_different_values_is_different()
         {
             var SUT1 = new Option<int>(1);
             var SUT2 = new Option<int>(2);
