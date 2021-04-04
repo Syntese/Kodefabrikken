@@ -193,9 +193,7 @@ namespace Kodefabrikken.Types.Tests
         [TestMethod]
         public void Construction_with_initialized_nullable_value_type_throws_exception()
         {
-#pragma warning disable CA1806 // Do not ignore method results
-            Action act = () => new Option<Nullable<int>>(3);
-#pragma warning restore CA1806 // Do not ignore method results
+            Action act = () => _ = new Option<Nullable<int>>(3);
 
             act.Should().Throw<ArgumentException>();
         }
@@ -215,9 +213,7 @@ namespace Kodefabrikken.Types.Tests
         {
 #nullable enable
             // compiler transforms to wrapped type
-#pragma warning disable CA1806 // Do not ignore method results
-            Action act = () => new Option<OptionTests?>(new OptionTests());
-#pragma warning restore CA1806 // Do not ignore method results
+            Action act = () => _ = new Option<OptionTests?>(new OptionTests());
 #nullable disable
 
             act.Should().NotThrow();
@@ -228,9 +224,7 @@ namespace Kodefabrikken.Types.Tests
         {
 #nullable enable
             // compiler transforms to wrapped type
-#pragma warning disable CA1806 // Do not ignore method results
-            Action act = () => new Option<OptionTests?>(null);
-#pragma warning restore CA1806 // Do not ignore method results
+            Action act = () => _ = new Option<OptionTests?>(null);
 #nullable disable
 
             act.Should().Throw<ArgumentNullException>();
@@ -394,6 +388,26 @@ namespace Kodefabrikken.Types.Tests
             Action act = () => SUT.Coalesce(() => null);
 
             act.Should().Throw<InvalidOperationException>();
+        }
+
+        [TestMethod]
+        public void Option_cast_to_expected_value()
+        {
+            var SUT = new Option<int>(3);
+
+            var result = SUT.Cast(Convert.ToDouble, () => throw new InvalidCastException());
+
+            result.Should().Be(3.0);
+        }
+
+        [TestMethod]
+        public void Empty_option_cast_to_excpected_value()
+        {
+            var SUT = Option<int>.Empty;
+
+            var result = SUT.Cast(p => throw new InvalidCastException(), () => 0.0);
+
+            result.Should().Be(0.0);
         }
 
         [TestMethod]

@@ -177,6 +177,15 @@ namespace Kodefabrikken.Types
             return result;
         }
 
+        /// <summary>
+        /// Cast the <see cref="Option{T}"/> to another object.
+        /// </summary>
+        /// <typeparam name="U">Type of the new object.</typeparam>
+        /// <param name="fromValue">Function to use when casting option with value.</param>
+        /// <param name="fromEmpty">Function to use when casting empty option.</param>
+        /// <returns></returns>
+        public U Cast<U>(Func<T, U> fromValue, Func<U> fromEmpty) => HasValue ? fromValue(Value) : fromEmpty();
+
         /// <inheritdoc/>
         public override bool Equals(object obj)
         {
