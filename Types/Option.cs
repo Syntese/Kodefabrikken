@@ -64,7 +64,7 @@ namespace Kodefabrikken.Types
         /// Implicitly convert any value to <see cref="Option{T}"/>.
         /// </summary>
         /// <param name="value">The value for the option.</param>
-        public static implicit operator Option<T>(T value) => value != null ? new Option<T>(value) : Empty;
+        public static implicit operator Option<T>(T value) => Create(value);
 
         T Value { get; }
 
