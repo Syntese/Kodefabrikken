@@ -1,24 +1,21 @@
-﻿using Kodefabrikken.Types;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
 
 using FluentAssertions;
 
-namespace Types.Tests
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+
+
+namespace Kodefabrikken.Types.Tests
 {
     [TestClass]
-    public class ReferenceTests
+    public class RequiredTests
     {
         [TestMethod]
         public void Object_initialized_with_is_wrapped()
         {
-            ReferenceTests o = new ReferenceTests();
+            RequiredTests o = new RequiredTests();
             
-            var SUT = new Reference<ReferenceTests>(o);
+            var SUT = new Required<RequiredTests>(o);
 
             SUT.Value.Should().BeSameAs(o);
         }
@@ -27,7 +24,7 @@ namespace Types.Tests
         public void Initialization_with_null_throws_exception()
         {
 #pragma warning disable CA1806 // Do not ignore method results
-            Action act = () => new Reference<ReferenceTests>(null);
+            Action act = () => new Required<RequiredTests>(null);
 #pragma warning restore CA1806 // Do not ignore method results
 
             act.Should().Throw<ArgumentNullException>();
@@ -36,7 +33,7 @@ namespace Types.Tests
         [TestMethod]
         public void Default_initialized_throws_exception_on_dereference()
         {
-            var SUT = new Reference<ReferenceTests>();
+            var SUT = new Required<RequiredTests>();
 
             Action act = () => { var x = SUT.Value; };
 

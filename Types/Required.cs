@@ -6,8 +6,8 @@ namespace Kodefabrikken.Types
     /// A true reference type to avoid <see cref="NullReferenceException"/>'s in code.
     /// Throws <see cref="InvalidOperationException"/> on usage if initialized with default ctor.
     /// </summary>
-    /// <typeparam name="T">The type of the referenced object.</typeparam>
-    public struct Reference<T> where T : class
+    /// <typeparam name="T">The type of the required object.</typeparam>
+    public struct Required<T> where T : class
     {
         readonly bool _properly_initialized;
         readonly T _value;
@@ -21,25 +21,26 @@ namespace Kodefabrikken.Types
         }
 
         /// <summary>
-        /// Create a new <see cref="Reference{T}"/>.
+        /// Create a new <see cref="Required{T}"/>.
         /// </summary>
-        /// <param name="value">The reference object to reference.</param>
-        /// <returns>The created reference.</returns>
-        public static Reference<T> Create(T value) => new Reference<T>(value);
+        /// <param name="value">The reference object to make required.</param>
+        /// <returns>The created required.</returns>
+        public static Required<T> Create(T value) => new Required<T>(value);
 
         /// <summary>
-        /// Construction of a reference.
+        /// Construction of a required reference.
         /// </summary>
         /// <param name="value">The object to reference.</param>
+        /// <exception cref="ArgumentException"><paramref name="value"/> is of type Required</exception>
         /// <exception cref="ArgumentNullException"><paramref name="value"/> is null.</exception>
-        public Reference(T value)
+        public Required(T value)
         {
             _value = value ?? throw new ArgumentNullException(nameof(value));
             _properly_initialized = true;
         }
 
         /// <summary>
-        /// Returns the referenced object.
+        /// Returns the required object.
         /// </summary>
         public T Value
         {
@@ -56,7 +57,7 @@ namespace Kodefabrikken.Types
         {
             UsageGuard();
 
-            if(obj is Reference<T> v)
+            if (obj is Required<T> v)
             {
                 return _value.Equals(v._value);
             }
@@ -78,7 +79,7 @@ namespace Kodefabrikken.Types
         /// <param name="left">The left hand operand.</param>
         /// <param name="right">The right hand operand.</param>
         /// <returns></returns>
-        public static bool operator ==(Reference<T> left, Reference<T> right)
+        public static bool operator ==(Required<T> left, Required<T> right)
         {
             return left.Equals(right);
         }
@@ -89,7 +90,7 @@ namespace Kodefabrikken.Types
         /// <param name="left">Left hand operator.</param>
         /// <param name="right">Right hand operator.</param>
         /// <returns></returns>
-        public static bool operator !=(Reference<T> left, Reference<T> right)
+        public static bool operator !=(Required<T> left, Required<T> right)
         {
             return !(left == right);
         }
