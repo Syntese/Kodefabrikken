@@ -6,50 +6,50 @@ Helpers for missing features in C#.
 
 Types simplifying kode.
 
-### Option
+### Optional
 Non-mutable wrapper for optional values that avoids any Nullreference Exception.
 
 Create with
 ``` C#
-var option1 = new Option<int>(3);
-var option2 = Option<int>.Empty; // or new Option<int>();
-var option3 = new Option<SomeClass>(someClassValue);
-// constructing with null, Option<> or Nullable<> throws exception
+var optional1 = new Optional<int>(3);
+var optional2 = Optional<int>.Empty; // or new Option<int>();
+var optional3 = new Optional<SomeClass>(someClassValue);
+// constructing with null, Optional<> or Nullable<> throws exception
 
-var option4 = object.ToOption();
-var option5 = nullable.ToOption();
-var option6 = value.ToOption();
+var optional4 = object.ToOptional();
+var optional5 = nullable.ToOptional();
+var optional6 = value.ToOptional();
 ```
 
 
 Check value
 ``` C#
-if(option.HasValue) ...
-option.IfValue(p => Console.WriteLine(p));
-option.IfValue(p => ...).Else(() => Console.WriteLine("empty"));
+if(optional.HasValue) ...
+optional.IfValue(p => Console.WriteLine(p));
+optional.IfValue(p => ...).Else(() => Console.WriteLine("empty"));
 ```
 
 Coalesce to value
 ``` C#
-var x = option.Coalesce(3);
-var x = option.Coalesce(() => 7);
+var x = optional.Coalesce(3);
+var x = optional.Coalesce(() => 7);
 ```
 
 Compare
 ``` C#
 // some special cases
 
-var option1 = Option<someType>.Empty;
-option1.Equals(null);
+var optional1 = Optional<someType>.Empty;
+optional1.Equals(null);
 
-var option2 = Option<int>(3);
-option2.Equals(3);
+var optional2 = Optional<int>(3);
+optional2.Equals(3);
 ```
 
 Convert to 'native' types
 ``` C#
-option1.ToObject(); // for reference type
-option2.ToNullable(); // for value type
+optional1.ToObject(); // for reference type
+optional2.ToNullable(); // for value type
 ```
 
  

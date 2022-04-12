@@ -6,16 +6,16 @@ using Kodefabrikken.Types;
 
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Types.Tests
+namespace Kodefabrikken.Types.Tests
 {
     [TestClass]
-    public class OptionExtensionsTests
+    public class OptionalExtensionsTests
     {
         [TestMethod]
-        public void Option_with_value_type_transforms_to_nullable()
+        public void Optional_with_value_type_transforms_to_nullable()
         {
             var value = 3;
-            var SUT = new Option<int>(value);
+            var SUT = new Optional<int>(value);
 
             var result = SUT.ToNullable();
 
@@ -24,9 +24,9 @@ namespace Types.Tests
         }
 
         [TestMethod]
-        public void Option_with_empty_value_type_transforms_to_nullable()
+        public void Optional_with_empty_value_type_transforms_to_nullable()
         {
-            var SUT = Option<int>.Empty;
+            var SUT = Optional<int>.Empty;
 
             var result = SUT.ToNullable();
 
@@ -34,12 +34,12 @@ namespace Types.Tests
         }
 
         [TestMethod]
-        public void Nullable_value_type_transforms_to_Option()
+        public void Nullable_value_type_transforms_to_Optional()
         {
             var value = 3;
             Nullable<int> v = value;
 
-            var result = v.ToOption();
+            var result = v.ToOptional();
 
             result.HasValue.Should().BeTrue();
             int resultValue = -1;
@@ -48,21 +48,21 @@ namespace Types.Tests
         }
 
         [TestMethod]
-        public void Empty_nullable_value_type_transforms_to_Option()
+        public void Empty_nullable_value_type_transforms_to_Optional()
         {
             Nullable<int> v = null;
 
-            var result = v.ToOption();
+            var result = v.ToOptional();
 
             result.HasValue.Should().BeFalse();
         }
 
         [TestMethod]
-        public void Value_type_transforms_to_Option()
+        public void Value_type_transforms_to_Optional()
         {
             var value = 3;
 
-            var result = value.ToOption();
+            var result = value.ToOptional();
 
             result.HasValue.Should().BeTrue();
             var resultValue = -1;
@@ -71,33 +71,33 @@ namespace Types.Tests
         }
 
         [TestMethod]
-        public void Reference_type_transforms_to_Option()
+        public void Reference_type_transforms_to_Optional()
         {
-            OptionExtensionsTests value = new OptionExtensionsTests();
+            OptionalExtensionsTests value = new OptionalExtensionsTests();
 
-            var result = value.ToOption();
+            var result = value.ToOptional();
 
             result.HasValue.Should().BeTrue();
-            OptionExtensionsTests resultValue = null;
+            OptionalExtensionsTests resultValue = null;
             result.IfValue(p => resultValue = p);
             resultValue.Should().BeSameAs(value);
         }
 
         [TestMethod]
-        public void Empty_reference_type_transforms_to_Option()
+        public void Empty_reference_type_transforms_to_Optional()
         {
-            OptionExtensionsTests value = null;
+            OptionalExtensionsTests value = null;
 
-            var result = value.ToOption();
+            var result = value.ToOptional();
 
             result.HasValue.Should().BeFalse();
         }
 
         [TestMethod]
-        public void Option_with_reference_type_transforms_to_object()
+        public void Optional_with_reference_type_transforms_to_object()
         {
-            var value = new OptionExtensionsTests();
-            var SUT = new Option<OptionExtensionsTests>(value);
+            var value = new OptionalExtensionsTests();
+            var SUT = new Optional<OptionalExtensionsTests>(value);
 
             var result = SUT.ToObject();
 
@@ -105,9 +105,9 @@ namespace Types.Tests
         }
 
         [TestMethod]
-        public void Option_with_emtpy_reference_type_transforms_to_object()
+        public void Optional_with_emtpy_reference_type_transforms_to_object()
         {
-            var SUT = Option<OptionExtensionsTests>.Empty;
+            var SUT = Optional<OptionalExtensionsTests>.Empty;
 
             var result = SUT.ToObject();
 

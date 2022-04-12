@@ -4,14 +4,14 @@ namespace Kodefabrikken.Types
 {
     /// <summary>
     /// A type for handling optional values without any chance of <see cref="NullReferenceException"/>.
-    /// <see cref="Nullable{T}"/> and <see cref="Option{T}"/> can't be optional values.
+    /// <see cref="Nullable{T}"/> and <see cref="Optional{T}"/> can't be optional values.
     /// </summary>
     /// <typeparam name="T">Type of the optional value.</typeparam>
-    public struct Option<T>
+    public struct Optional<T>
     {
-        static readonly Type gOptionType = typeof(T);
-        static readonly bool gIsNullableOptionType = gOptionType.IsGenericType && gOptionType.GetGenericTypeDefinition() == typeof(Nullable<>);
-        static readonly bool gIsOptionOptionType = gOptionType.IsGenericType && gOptionType.GetGenericTypeDefinition() == typeof(Option<>);
+        static readonly Type gOptionalType = typeof(T);
+        static readonly bool gIsNullableOptionalType = gOptionalType.IsGenericType && gOptionalType.GetGenericTypeDefinition() == typeof(Nullable<>);
+        static readonly bool gIsOptionalOptionalType = gOptionalType.IsGenericType && gOptionalType.GetGenericTypeDefinition() == typeof(Optional<>);
 
         /// <summary>
         /// Type of the optional value.
@@ -20,25 +20,25 @@ namespace Kodefabrikken.Types
         {
             get
             {
-                if (gIsNullableOptionType || gIsOptionOptionType)
+                if (gIsNullableOptionalType || gIsOptionalOptionalType)
                 {
                     throw new InvalidOperationException();
                 }
 
-                return gOptionType;
+                return gOptionalType;
             }
         }
 
-        static readonly Option<T> _empty = default;
+        static readonly Optional<T> _empty = default;
 
         /// <summary>
-        /// An option without a value.
+        /// An optional without a value.
         /// </summary>
-        public static Option<T> Empty
+        public static Optional<T> Empty
         {
             get
             {
-                if (gIsNullableOptionType || gIsOptionOptionType)
+                if (gIsNullableOptionalType || gIsOptionalOptionalType)
                 {
                     throw new InvalidOperationException();
                 }
@@ -48,45 +48,46 @@ namespace Kodefabrikken.Types
         }
 
         /// <summary>
-        /// Creates an empty option.
+        /// Creates an empty optional.
         /// </summary>
-        /// <returns>The empty option.</returns>
-        public static Option<T> Create() => Empty;
+        /// <returns>The empty optional.</returns>
+        public static Optional<T> Create() => Empty;
 
         /// <summary>
-        /// Creates an option.
+        /// Creates an optional.
         /// </summary>
-        /// <param name="value">The value of the option.</param>
-        /// <returns>The created option. <see cref="Empty"/> if <paramref name="value"/> is null.</returns>
-        public static Option<T> Create(T value) => value != null ? new Option<T>(value) : Empty;
-        
+        /// <param name="value">The value of the optional.</param>
+        /// <returns>The created optional. <see cref="Empty"/> if <paramref name="value"/> is null.</returns>
+        public static Optional<T> Create(T value) => value != null ? new Optional<T>(value) : Empty;
+
         /// <summary>
-        /// Implicitly convert any value to <see cref="Option{T}"/>.
+        /// Implicitly convert any value to <see cref="Optional{T}"/>.
         /// </summary>
-        /// <param name="value">The value for the option.</param>
-        public static implicit operator Option<T>(T value) => Create(value);
+        /// <param name="value">The value of the optional.</param>
+        public static implicit operator Optional<T>(T value) => Create(value);
 
         T Value { get; }
 
         /// <summary>
-        /// Creates an <see cref="Option{T}"/>, a non-mutable type with a value.
-        /// Use <see cref="Option{T}.Empty"/> for empty options.
+        /// Creates an <see cref="Optional{T}"/>, a non-mutable type with a value.
+        /// Use <see cref="Optional{T}.Empty"/> for empty optionals.
         /// </summary>
-        /// <param name="value">The value of the option.</param>
+        /// <param name="value">The value of the optional.</param>
         /// <exception cref="ArgumentNullException"><paramref name="value"/> is null.</exception>
-        /// <exception cref="ArgumentException"><paramref name="value"/> is Nullable or Option.</exception>
-        public Option(T value)
+        /// <exception cref="ArgumentException"><paramref name="value"/> is Nullable or Optional.</exception>
+        public Optional(T value)
         {
-            if (gIsNullableOptionType)
+            if (gIsNullableOptionalType)
             {
-                throw new ArgumentException($"{nameof(value)} is Nullable, use ToOption() instead.");
+                throw new ArgumentException($"{nameof(value)} is Nullable, use ToOptional() instead.");
             }
 
-            if (gIsOptionOptionType)
+            if (gIsOptionalOptionalType)
             {
-                throw new ArgumentException($"{nameof(value)} is Option");
+                throw new ArgumentException($"{nameof(value)} is Optional");
             }
 
+            // TODO : Should this create an empty optional?
             if (value == null)
             {
                 throw new ArgumentNullException(nameof(value));
@@ -97,23 +98,23 @@ namespace Kodefabrikken.Types
         }
 
         /// <summary>
-        /// true if <see cref="Option{T}"/> has value.
+        /// true if <see cref="Optional{T}"/> has value.
         /// </summary>
         public bool HasValue { get; }
 
         class IfValueContext : IIfContext
         {
-            readonly Option<T> _option;
+            readonly Optional<T> _optional;
 
-            internal IfValueContext(Option<T> option)
+            internal IfValueContext(Optional<T> optional)
             {
-                _option = option;
+                _optional = optional;
             }
 
             /// <inheritdoc/>
             public void Else(Action action)
             {
-                if (!_option.HasValue)
+                if (!_optional.HasValue)
                 {
                     action();
                 };
@@ -136,7 +137,7 @@ namespace Kodefabrikken.Types
         }
 
         /// <summary>
-        /// Return option value if <see cref="HasValue"/>, supplied <paramref name="value"/> otherwise.
+        /// Return optional value if <see cref="HasValue"/>, supplied <paramref name="value"/> otherwise.
         /// </summary>
         /// <param name="value">Value to return if <see cref="HasValue"/> is false.</param>
         /// <returns>The coalesced value.</returns>
@@ -145,21 +146,27 @@ namespace Kodefabrikken.Types
         {
             if (value == null)
             {
-                throw new ArgumentNullException();
+                throw new ArgumentNullException(nameof(value));
             }
 
             return HasValue ? Value : value;
         }
 
         /// <summary>
-        /// Returns option value if <see cref="HasValue"/>, value from <paramref name="value_func"/> otherwise.
+        /// Returns optional value if <see cref="HasValue"/>, value from <paramref name="value_func"/> otherwise.
         /// </summary>
         /// <param name="value_func">Function for alternate value if <see cref="HasValue"/> is false.</param>
         /// <returns>The coalsced value.</returns>
+        /// <exception cref="ArgumentNullException"><paramref name="value_func"/> is null, evaluated even if <see cref="HasValue"/>.</exception>
         /// <exception cref="InvalidOperationException"><paramref name="value_func"/> evaluates to null, only evaluated if <see cref="HasValue"/> is false.</exception>
         public T Coalesce(Func<T> value_func)
         {
             T result;
+
+            if (value_func == null)
+            {
+                throw new ArgumentNullException(nameof(value_func));
+            }
 
             if (HasValue)
             {
@@ -178,11 +185,11 @@ namespace Kodefabrikken.Types
         }
 
         /// <summary>
-        /// Cast the <see cref="Option{T}"/> to another object.
+        /// Cast the <see cref="Optional{T}"/> to another object.
         /// </summary>
         /// <typeparam name="U">Type of the new object.</typeparam>
-        /// <param name="fromValue">Function to use when casting option with value.</param>
-        /// <param name="fromEmpty">Function to use when casting empty option.</param>
+        /// <param name="fromValue">Function to use when casting optional with value.</param>
+        /// <param name="fromEmpty">Function to use when casting empty optional.</param>
         /// <returns></returns>
         public U Cast<U>(Func<T, U> fromValue, Func<U> fromEmpty) => HasValue ? fromValue(Value) : fromEmpty();
 
@@ -194,7 +201,7 @@ namespace Kodefabrikken.Types
                 return !HasValue;
             }
 
-            if (obj is Option<T> val)
+            if (obj is Optional<T> val)
             {
                 if (!val.HasValue)
                 {
@@ -225,7 +232,7 @@ namespace Kodefabrikken.Types
         /// <param name="left">Left value.</param>
         /// <param name="right">Right value.</param>
         /// <returns>true if operands are equal.</returns>
-        public static bool operator ==(Option<T> left, Option<T> right)
+        public static bool operator ==(Optional<T> left, Optional<T> right)
         {
             return left.Equals(right);
         }
@@ -236,7 +243,7 @@ namespace Kodefabrikken.Types
         /// <param name="left">Left value.</param>
         /// <param name="right">Right value.</param>
         /// <returns>true if operands are non-equal.</returns>
-        public static bool operator !=(Option<T> left, Option<T> right)
+        public static bool operator !=(Optional<T> left, Optional<T> right)
         {
             return !(left == right);
         }

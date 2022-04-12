@@ -7,12 +7,12 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace Kodefabrikken.Types.Tests
 {
     [TestClass]
-    public class OptionTests
+    public class OptionalTests
     {
         [TestMethod]
         public void Type_is_correct_for_value_type()
         {
-            var SUT = Option<int>.OptionType;
+            var SUT = Optional<int>.OptionType;
 
             SUT.Should().Be(typeof(int));
         }
@@ -20,30 +20,30 @@ namespace Kodefabrikken.Types.Tests
         [TestMethod]
         public void Type_is_correct_for_reference_type()
         {
-            var SUT = Option<OptionTests>.OptionType;
+            var SUT = Optional<OptionalTests>.OptionType;
 
-            SUT.Should().Be(typeof(OptionTests));
+            SUT.Should().Be(typeof(OptionalTests));
         }
 
         [TestMethod]
         public void Empty_for_Nullable_value_type_throws_exception()
         {
-            Action act = () => _ = Option<Nullable<int>>.Empty;
+            Action act = () => _ = Optional<Nullable<int>>.Empty;
 
             act.Should().Throw<InvalidOperationException>();
 
             // repeat test with nullable context
 #nullable enable
-            act = () => _ = Option<int?>.Empty;
+            act = () => _ = Optional<int?>.Empty;
 #nullable disable
 
             act.Should().Throw<InvalidOperationException>();
         }
 
         [TestMethod]
-        public void Empty_for_Option_type_throws_exception()
+        public void Empty_for_Optional_type_throws_exception()
         {
-            Action act = () => _ = Option<Option<int>>.Empty;
+            Action act = () => _ = Optional<Optional<int>>.Empty;
 
             act.Should().Throw<InvalidOperationException>();
         }
@@ -51,7 +51,7 @@ namespace Kodefabrikken.Types.Tests
         [TestMethod]
         public void Empty_for_Value_type_has_no_value()
         {
-            var SUT = Option<int>.Empty;
+            var SUT = Optional<int>.Empty;
 
             SUT.HasValue.Should().BeFalse();
         }
@@ -61,7 +61,7 @@ namespace Kodefabrikken.Types.Tests
         {
             // compiler transforms to wrapped type
 #nullable enable
-            var SUT = Option<OptionTests?>.Empty;
+            var SUT = Optional<OptionalTests?>.Empty;
 #nullable disable
 
             SUT.HasValue.Should().BeFalse();
@@ -70,7 +70,7 @@ namespace Kodefabrikken.Types.Tests
         [TestMethod]
         public void Empty_is_created_for_value_type()
         {
-            var SUT = Option<int>.Create();
+            var SUT = Optional<int>.Create();
 
             SUT.Should().NotBeNull();
             SUT.HasValue.Should().BeFalse();
@@ -79,18 +79,18 @@ namespace Kodefabrikken.Types.Tests
         [TestMethod]
         public void Empty_is_created_for_reference_type()
         {
-            var SUT = Option<OptionTests>.Create();
+            var SUT = Optional<OptionalTests>.Create();
 
             SUT.Should().NotBeNull();
             SUT.HasValue.Should().BeFalse();
         }
 
         [TestMethod]
-        public void Option_is_created_for_value_type()
+        public void Optional_is_created_for_value_type()
         {
             int i = 3;
 
-            var SUT = Option<int>.Create(i);
+            var SUT = Optional<int>.Create(i);
 
             SUT.Should().NotBeNull();
             int v = 0;
@@ -99,34 +99,34 @@ namespace Kodefabrikken.Types.Tests
         }
 
         [TestMethod]
-        public void Option_is_created_for_reference_type()
+        public void Optional_is_created_for_reference_type()
         {
-            OptionTests x = new OptionTests();
+            OptionalTests x = new OptionalTests();
 
-            var SUT = Option<OptionTests>.Create(x);
+            var SUT = Optional<OptionalTests>.Create(x);
 
             SUT.Should().NotBeNull();
-            OptionTests v = null;
+            OptionalTests v = null;
             SUT.IfValue(p => v = p);
             v.Should().BeSameAs(x);
         }
 
         [TestMethod]
-        public void Option_is_created_for_null_reference_type()
+        public void Optional_is_created_for_null_reference_type()
         {
-            OptionTests x = null;
+            OptionalTests x = null;
 
-            var SUT = Option<OptionTests>.Create(x);
+            var SUT = Optional<OptionalTests>.Create(x);
 
             SUT.Should().NotBeNull();
             SUT.HasValue.Should().BeFalse();
         }
 
         [TestMethod]
-        public void Value_type_is_cast_to_Option()
+        public void Value_type_is_cast_to_Optional()
         {
             int i = 3;
-            Option<int> SUT = i;
+            Optional<int> SUT = i;
 
             SUT.Should().NotBeNull();
             int v = 0;
@@ -135,22 +135,22 @@ namespace Kodefabrikken.Types.Tests
         }
 
         [TestMethod]
-        public void Reference_type_is_cast_to_Option()
+        public void Reference_type_is_cast_to_Optional()
         {
-            OptionTests o = new OptionTests();
-            Option<OptionTests> SUT = o;
+            OptionalTests o = new OptionalTests();
+            Optional<OptionalTests> SUT = o;
 
             SUT.Should().NotBeNull();
-            OptionTests v = null;
+            OptionalTests v = null;
             SUT.IfValue(p => v = p);
             v.Should().BeSameAs(o);
         }
 
         [TestMethod]
-        public void Null_reference_type_is_cast_to_Option()
+        public void Null_reference_type_is_cast_to_Optional()
         {
-            OptionTests o = null;
-            Option<OptionTests> SUT = o;
+            OptionalTests o = null;
+            Optional<OptionalTests> SUT = o;
 
             SUT.Should().NotBeNull();
             SUT.HasValue.Should().BeFalse();
@@ -160,7 +160,7 @@ namespace Kodefabrikken.Types.Tests
         public void Value_type_has_correct_state()
         {
             var value = 3;
-            var SUT = new Option<int>(value);
+            var SUT = new Optional<int>(value);
 
             SUT.HasValue.Should().BeTrue();
         }
@@ -168,8 +168,8 @@ namespace Kodefabrikken.Types.Tests
         [TestMethod]
         public void Reference_type_has_correct_state()
         {
-            var value = new OptionTests();
-            var SUT = new Option<OptionTests>(value);
+            var value = new OptionalTests();
+            var SUT = new Optional<OptionalTests>(value);
 
             SUT.HasValue.Should().BeTrue();
         }
@@ -177,7 +177,7 @@ namespace Kodefabrikken.Types.Tests
         [TestMethod]
         public void Default_constructor_with_reference_type_has_no_value()
         {
-            var SUT = new Option<OptionTests>();
+            var SUT = new Optional<OptionalTests>();
 
             SUT.HasValue.Should().BeFalse();
         }
@@ -185,7 +185,7 @@ namespace Kodefabrikken.Types.Tests
         [TestMethod]
         public void Default_constructor_with_value_type_has_no_value()
         {
-            var SUT = new Option<int>();
+            var SUT = new Optional<int>();
 
             SUT.HasValue.Should().BeFalse();
         }
@@ -193,7 +193,7 @@ namespace Kodefabrikken.Types.Tests
         [TestMethod]
         public void Construction_with_initialized_nullable_value_type_throws_exception()
         {
-            Action act = () => _ = new Option<Nullable<int>>(3);
+            Action act = () => _ = new Optional<Nullable<int>>(3);
 
             act.Should().Throw<ArgumentException>();
         }
@@ -202,7 +202,7 @@ namespace Kodefabrikken.Types.Tests
         public void Construction_with_empty_nullable_value_type_throws_exception()
         {
 #pragma warning disable CA1806 // Do not ignore method results
-            Action act = () => new Option<Nullable<int>>(null);
+            Action act = () => new Optional<Nullable<int>>(null);
 #pragma warning restore CA1806 // Do not ignore method results
 
             act.Should().Throw<ArgumentException>();
@@ -213,7 +213,7 @@ namespace Kodefabrikken.Types.Tests
         {
 #nullable enable
             // compiler transforms to wrapped type
-            Action act = () => _ = new Option<OptionTests?>(new OptionTests());
+            Action act = () => _ = new Optional<OptionalTests?>(new OptionalTests());
 #nullable disable
 
             act.Should().NotThrow();
@@ -224,7 +224,7 @@ namespace Kodefabrikken.Types.Tests
         {
 #nullable enable
             // compiler transforms to wrapped type
-            Action act = () => _ = new Option<OptionTests?>(null);
+            Action act = () => _ = new Optional<OptionalTests?>(null);
 #nullable disable
 
             act.Should().Throw<ArgumentNullException>();
@@ -234,7 +234,7 @@ namespace Kodefabrikken.Types.Tests
         public void Registered_value_action_called_with_correct_value()
         {
             var value = 3;
-            var SUT = new Option<int>(value);
+            var SUT = new Optional<int>(value);
             int paramValue = -1;
 
             SUT.IfValue(p => paramValue = p);
@@ -245,7 +245,7 @@ namespace Kodefabrikken.Types.Tests
         [TestMethod]
         public void Registered_value_action_not_called_when_empty()
         {
-            var SUT = Option<int>.Empty;
+            var SUT = Optional<int>.Empty;
             bool isCalled = false;
 
             SUT.IfValue(_ => isCalled = true);
@@ -256,7 +256,7 @@ namespace Kodefabrikken.Types.Tests
         [TestMethod]
         public void Registered_value_action_called_when_value_and_context_used()
         {
-            var SUT = new Option<int>(3);
+            var SUT = new Optional<int>(3);
             bool ifValueCalled = false;
             bool ifEmptyCalled = false;
 
@@ -270,7 +270,7 @@ namespace Kodefabrikken.Types.Tests
         [TestMethod]
         public void Registered_empty_action_called_when_empty_and_context_used()
         {
-            var SUT = Option<int>.Empty;
+            var SUT = Optional<int>.Empty;
             bool ifValueCalled = false;
             bool ifEmptyCalled = false;
 
@@ -285,7 +285,7 @@ namespace Kodefabrikken.Types.Tests
         public void Value_type_is_coalesced()
         {
             int value = 3;
-            var SUT = Option<int>.Empty;
+            var SUT = Optional<int>.Empty;
 
             var result = SUT.Coalesce(value);
 
@@ -296,7 +296,7 @@ namespace Kodefabrikken.Types.Tests
         public void Value_type_with_value_is_not_coalsced()
         {
             int value = 3;
-            var SUT = new Option<int>(value);
+            var SUT = new Optional<int>(value);
 
             var result = SUT.Coalesce(-1);
 
@@ -307,7 +307,7 @@ namespace Kodefabrikken.Types.Tests
         public void Value_type_is_coalesced_with_functor()
         {
             int value = 3;
-            var SUT = Option<int>.Empty;
+            var SUT = Optional<int>.Empty;
 
             var result = SUT.Coalesce(() => value);
 
@@ -318,7 +318,7 @@ namespace Kodefabrikken.Types.Tests
         public void Value_type_with_value_is_not_coalsced_with_functor()
         {
             int value = 3;
-            var SUT = new Option<int>(value);
+            var SUT = new Optional<int>(value);
 
             var result = SUT.Coalesce(() => -1);
 
@@ -328,8 +328,8 @@ namespace Kodefabrikken.Types.Tests
         [TestMethod]
         public void Reference_type_is_coalesced()
         {
-            OptionTests value = new OptionTests();
-            var SUT = Option<OptionTests>.Empty;
+            OptionalTests value = new OptionalTests();
+            var SUT = Optional<OptionalTests>.Empty;
 
             var result = SUT.Coalesce(value);
 
@@ -339,10 +339,10 @@ namespace Kodefabrikken.Types.Tests
         [TestMethod]
         public void Reference_type_with_value_is_not_coalesced()
         {
-            OptionTests value = new OptionTests();
-            var SUT = new Option<OptionTests>(value);
+            OptionalTests value = new OptionalTests();
+            var SUT = new Optional<OptionalTests>(value);
 
-            var result = SUT.Coalesce(new OptionTests());
+            var result = SUT.Coalesce(new OptionalTests());
 
             result.Should().BeSameAs(value);
         }
@@ -350,8 +350,8 @@ namespace Kodefabrikken.Types.Tests
         [TestMethod]
         public void Reference_type_is_coalesced_with_functor()
         {
-            OptionTests value = new OptionTests();
-            var SUT = Option<OptionTests>.Empty;
+            OptionalTests value = new OptionalTests();
+            var SUT = Optional<OptionalTests>.Empty;
 
             var result = SUT.Coalesce(() => value);
 
@@ -361,10 +361,10 @@ namespace Kodefabrikken.Types.Tests
         [TestMethod]
         public void Reference_type_with_value_is_not_coalesced_with_functor()
         {
-            OptionTests value = new OptionTests();
-            var SUT = new Option<OptionTests>(value);
+            OptionalTests value = new OptionalTests();
+            var SUT = new Optional<OptionalTests>(value);
 
-            var result = SUT.Coalesce(() => new OptionTests());
+            var result = SUT.Coalesce(() => new OptionalTests());
 
             result.Should().BeSameAs(value);
         }
@@ -372,8 +372,8 @@ namespace Kodefabrikken.Types.Tests
         [TestMethod]
         public void Empty_reference_type_in_coalesce_throws()
         {
-            OptionTests value = null;
-            var SUT = Option<OptionTests>.Empty;
+            OptionalTests value = null;
+            var SUT = Optional<OptionalTests>.Empty;
 
             Action act = () => SUT.Coalesce(value);
 
@@ -381,9 +381,21 @@ namespace Kodefabrikken.Types.Tests
         }
 
         [TestMethod]
+        public void Coalesce_with_null_functor_throws()
+        {
+            var SUT = Optional<OptionalTests>.Empty;
+
+            Func<OptionalTests> func = null;
+
+            Action act = () => SUT.Coalesce(func);
+
+            act.Should().Throw<ArgumentNullException>();
+        }
+
+        [TestMethod]
         public void Coalesce_functor_returning_empty_reference_throws()
         {
-            var SUT = Option<OptionTests>.Empty;
+            var SUT = Optional<OptionalTests>.Empty;
 
             Action act = () => SUT.Coalesce(() => null);
 
@@ -391,9 +403,9 @@ namespace Kodefabrikken.Types.Tests
         }
 
         [TestMethod]
-        public void Option_cast_to_expected_value()
+        public void Optional_cast_to_expected_value()
         {
-            var SUT = new Option<int>(3);
+            var SUT = new Optional<int>(3);
 
             var result = SUT.Cast(Convert.ToDouble, () => throw new InvalidCastException());
 
@@ -401,9 +413,9 @@ namespace Kodefabrikken.Types.Tests
         }
 
         [TestMethod]
-        public void Empty_option_cast_to_excpected_value()
+        public void Empty_optional_cast_to_excpected_value()
         {
-            var SUT = Option<int>.Empty;
+            var SUT = Optional<int>.Empty;
 
             var result = SUT.Cast(p => throw new InvalidCastException(), () => 0.0);
 
@@ -411,64 +423,66 @@ namespace Kodefabrikken.Types.Tests
         }
 
         [TestMethod]
-        public void Option_are_equal_to_self()
+        public void Optional_are_equal_to_self()
         {
-            var SUT = new Option<OptionTests>();
+            var SUT = new Optional<OptionalTests>();
 
             // TODO : Are we boxing, should we implement Equals<T>?
             SUT.Equals(SUT).Should().BeTrue();
         }
 
         [TestMethod]
-        public void Empty_option_are_equal_to_null()
+        public void Empty_optional_are_equal_to_null()
         {
-            var SUT = new Option<OptionTests>();
+            var SUT = new Optional<OptionalTests>();
 
             SUT.Equals(null).Should().BeTrue();
         }
 
         [TestMethod]
-        public void Different_value_options_are_not_equal()
+        public void Different_value_optionals_are_not_equal()
         {
-            var SUT1 = new Option<int>(1);
-            var SUT2 = new Option<int>(2);
+            var SUT1 = new Optional<int>(1);
+            var SUT2 = new Optional<int>(2);
 
             SUT1.Equals(SUT2).Should().BeFalse();
         }
 
         [TestMethod]
-        public void Option_should_be_equal_to_same_value()
+        public void Optional_should_be_equal_to_same_value()
         {
             var value = 3;
-            var SUT = new Option<int>(value);
+            var SUT = new Optional<int>(value);
 
             SUT.Equals(value).Should().BeTrue();
         }
 
         [TestMethod]
-        public void Options_of_different_type_should_not_be_equal()
+        public void Optionals_of_different_type_should_not_be_equal()
         {
-            var SUT1 = new Option<int>(7);
-            var SUT2 = new Option<long>(7);
+            var SUT1 = new Optional<int>(7);
+            var SUT2 = new Optional<long>(7);
 
             SUT1.Equals(SUT2).Should().BeFalse();
         }
 
         [TestMethod]
-        public void Option_is_equal_to_self()
+        public void Optional_is_equal_to_self()
         {
-            var SUT = new Option<int>(1);
+            var SUT = new Optional<int>(1);
 
+#pragma warning disable CS1718 // Comparison made to same variable
             var result = SUT == SUT;
+#pragma warning restore CS1718 // Comparison made to same variable
 
             result.Should().BeTrue();
         }
 
         [TestMethod]
-        public void Option_with_different_values_is_different()
+        public void Optionals_with_different_values_are_different()
         {
-            var SUT1 = new Option<int>(1);
-            var SUT2 = new Option<int>(2);
+            var SUT1 = new Optional<int>(1);
+            var SUT2 = new Optional<int>(2);
 
             var result = SUT1 != SUT2;
 
